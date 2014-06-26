@@ -2124,6 +2124,7 @@ flush:
     pad->traf = NULL;
     atom_moof_copy_data (moof, &data, &size, &offset);
     buffer = _gst_buffer_new_take_data (data, offset);
+    GST_BUFFER_FLAG_SET (buffer, GST_BUFFER_FLAG_DISCONT);
     GST_LOG_OBJECT (qtmux, "writing moof size %" G_GSIZE_FORMAT,
         gst_buffer_get_size (buffer));
     ret = gst_qt_mux_send_buffer (qtmux, buffer, &qtmux->header_size, FALSE);
@@ -2170,6 +2171,7 @@ init:
   }
 
   /* add buffer and metadata */
+  GST_BUFFER_FLAG_UNSET (buf, GST_BUFFER_FLAG_DISCONT);
   atom_traf_add_samples (pad->traf, delta, size, sync, pts_offset,
       pad->sync && sync);
   atom_array_append (&pad->fragment_buffers, buf, 256);
